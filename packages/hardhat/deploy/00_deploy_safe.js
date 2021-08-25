@@ -5,7 +5,7 @@ const { ethers } = require("hardhat");
 const config = require("../../../config");
 
 module.exports = async ({ getNamedAccounts, deployments }) => {
-  const serviceClient = new SafeServiceClient("https://safe-transaction.rinkeby.gnosis.io/");
+  const serviceClient = new SafeServiceClient("https://safe-transaction.rinkeby.gnosis.io");
   const deployer = ethers.provider.getSigner();
   const deployerAddress = await deployer.getAddress();
   const ethAdapter = new EthersAdapter({
@@ -16,31 +16,44 @@ module.exports = async ({ getNamedAccounts, deployments }) => {
 
   const safeFactory = await SafeFactory.create({ ethAdapter });
 
-  let threshold = config.threshold;
+  const threshold = config.threshold;
   const owners = config.evaluators;
-  if (!owners.includes(deployerAddress)) {
-    console.log(`The deployer address is not set as one of the signers.`);
-    console.log(
-      `WARNING!: The deployer address is automatically added to the set of evaluators/signers and the threshold is increased by one!`,
+  if (!owners.map(_ => _.toLowerCase()).includes(deployerAddress.toLowerCase())) {
+    throw Error(
+      `The deployer needs to be one of the signers. Add the deployer (${deployerAddress}) address to the evaluators array in the config (and increase the threshold by one to keep things the same).`,
     );
-    owners.push(deployerAddress);
-    threshold += 1;
   }
   const safeAccountConfig = { owners, threshold };
   const safeSdk = await safeFactory.deploySafe(safeAccountConfig);
 
   const proposeTransactions = async transactions => {
-    const safeTransaction = await safeSdk.createTransaction(...transactions);
-    await safeSdk.signTransaction(safeTransaction);
-    const txHash = await safeSdk.getTransactionHash(safeTransaction);
+    try {
+      const safeTransaction = await safeSdk.createTransaction(...transactions);
+      await safeSdk.signTransaction(safeTransaction);
+      const txHash = await safeSdk.getTransactionHash(safeTransaction);
+      console.log("txHash: " + txHash);
+      console.log("safeTransaction: " + JSON.stringify(safeTransaction));
 
-    await serviceClient.proposeTransaction(
-      safeAddress,
-      safeTransaction.data,
-      txHash,
-      safeTransaction.signatures.get(deployerAddress.toLowerCase()),
-    );
-    console.log(`proposeTransaction done`);
+      console.log(
+        JSON.stringify({
+          safeAddress,
+          "safeTransaction.data": safeTransaction.data,
+          txHash,
+          signature: safeTransaction.signatures.get(deployerAddress.toLowerCase()),
+        }),
+      );
+
+      await serviceClient.proposeTransaction(
+        safeAddress,
+        safeTransaction.data,
+        txHash,
+        safeTransaction.signatures.get(deployerAddress.toLowerCase()),
+      );
+      console.log("transactions sent");
+    } catch (e) {
+      console.log("Failed to propose transaction:");
+      console.log(e);
+    }
   };
 
   const safeAddress = safeSdk.getAddress();
@@ -64,18 +77,57 @@ module.exports = async ({ getNamedAccounts, deployments }) => {
   await proposeTransactions([
     {
       to: config.beneficiary,
-      value: ethers.utils.parseEther(config.ethAmountToSend),
-      data: ethers.utils.base64.decode("yes"),
-      nonce: 0,
+      value: ethers.utils.parseEther(config.ethAmountToSend) / 2,
+      data: "0x",
+      // nonce: 0,
+    },
+    {
+      to: config.beneficiary,
+      value: ethers.utils.parseEther(config.ethAmountToSend) / 2,
+      data: "0x",
+      // nonce: 0,
     },
   ]);
   await proposeTransactions([
     {
-      to: config.beneficiary,
-      value: ethers.utils.parseEther(config.ethAmountToSend),
-      data: ethers.utils.base64.decode("no"),
-      nonce: 0,
+      to: deployerAddress,
+      value: ethers.utils.parseEther(config.ethAmountToSend) / 2,
+      data: "0x",
+      // nonce: 0,
+    },
+    {
+      to: deployerAddress,
+      value: ethers.utils.parseEther(config.ethAmountToSend) / 2,
+      data: "0x",
+      // nonce: 0,
     },
   ]);
   console.log("Transactions for both yes and no case created and proposed via the safe-service-client");
+  // const transactions = [
+  //   {
+  //     to: config.beneficiary,
+  //     value: ethers.utils.parseEther(config.ethAmountToSend),
+  //     data: ethers.utils.base64.decode("yes"),
+  //     nonce: 0
+  //   },
+  //   {
+  //     to: deployerAddress,
+  //     value: ethers.utils.parseEther(config.ethAmountToSend),
+  //     data: ethers.utils.base64.decode("no"),
+  //     nonce: 0
+  //   },
+  // ];
+
+  // const safeTransaction = await safeSdk.createTransaction(...transactions);
+  // await safeSdk.signTransaction(safeTransaction);
+  // const txHash = await safeSdk.getTransactionHash(safeTransaction);
+
+  // await serviceClient.proposeTransaction(
+  //   safeAddress,
+  //   safeTransaction.data,
+  //   txHash,
+  //   safeTransaction.signatures.get(deployerAddress.toLowerCase()),
+  // );
+
+  // console.log("Transactions for both yes and no case created and proposed via the safe-service-client");
 };

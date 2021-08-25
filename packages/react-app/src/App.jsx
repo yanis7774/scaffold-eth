@@ -414,7 +414,7 @@ function App(props) {
               blockExplorer={blockExplorer}
             /> */}
           <Route path="/">
-            <EvaluatorView config={SAFE_CONFIG} safeAddress={SAFE_ADDRESS}/>
+            <EvaluatorView config={SAFE_CONFIG} safeAddress={SAFE_ADDRESS} userAddress={address} userSigner={userSigner}/>
           </Route>
         </Switch>
       </BrowserRouter>
