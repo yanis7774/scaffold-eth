@@ -8,7 +8,7 @@ import { BrowserRouter, Link, Route, Switch } from "react-router-dom";
 import Web3Modal from "web3modal";
 import "./App.css";
 import { Account, Contract, Faucet, GasGauge, Header, Ramp, ThemeSwitch } from "./components";
-import { QUESTION ,INFURA_ID, NETWORK, NETWORKS } from "./constants";
+import { SAFE_ADDRESS, SAFE_CONFIG ,INFURA_ID, NETWORK, NETWORKS } from "./constants";
 import { Transactor } from "./helpers";
 import {
   useBalance,
@@ -414,7 +414,7 @@ function App(props) {
               blockExplorer={blockExplorer}
             /> */}
           <Route path="/">
-            <EvaluatorView question={QUESTION} safeAddress={0x0000}/>
+            <EvaluatorView config={SAFE_CONFIG} safeAddress={SAFE_ADDRESS}/>
           </Route>
         </Switch>
       </BrowserRouter>
