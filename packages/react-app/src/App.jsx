@@ -8,7 +8,7 @@ import { BrowserRouter, Link, Route, Switch } from "react-router-dom";
 import Web3Modal from "web3modal";
 import "./App.css";
 import { Account, Contract, Faucet, GasGauge, Header, Ramp, ThemeSwitch } from "./components";
-import { INFURA_ID, NETWORK, NETWORKS } from "./constants";
+import { QUESTION ,INFURA_ID, NETWORK, NETWORKS } from "./constants";
 import { Transactor } from "./helpers";
 import {
   useBalance,
@@ -21,7 +21,7 @@ import {
   useUserSigner,
 } from "./hooks";
 // import Hints from "./Hints";
-import { GnosisStarterView, Hints, Subgraph } from "./views";
+import {EvaluatorView ,GnosisStarterView, Hints, Subgraph } from "./views";
 
 const { ethers } = require("ethers");
 /*
@@ -388,40 +388,18 @@ function App(props) {
               }}
               to="/"
             >
-              Your Safe
-            </Link>
-          </Menu.Item>
-
-          {/* <Menu.Item key="/mainnetdai">
-            <Link
-              onClick={() => {
-                setRoute("/mainnetdai");
-              }}
-              to="/mainnetdai"
-            >
-              Mainnet DAI
-            </Link>
-          </Menu.Item>*/}
-          <Menu.Item key="/contract">
-            <Link
-              onClick={() => {
-                setRoute("/contract");
-              }}
-              to="/contract"
-            >
-              Contract
+              Evaluator
             </Link>
           </Menu.Item>
         </Menu>
 
         <Switch>
-          <Route exact path="/">
             {/*
                 🎛 this scaffolding is full of commonly used components
                 this <Contract/> component will automatically parse your ABI
                 and give you a form to interact with it locally
             */}
-            <GnosisStarterView
+            {/* <GnosisStarterView
               address={address}
               userSigner={userSigner}
               mainnetProvider={mainnetProvider}
@@ -434,36 +412,9 @@ function App(props) {
               purpose={purpose}
               setPurposeEvents={setPurposeEvents}
               blockExplorer={blockExplorer}
-            />
-          {/* </Route>
-          <Route path="/mainnetdai">
-            <Contract
-              name="DAI"
-              customContract={mainnetContracts && mainnetContracts.contracts && mainnetContracts.contracts.DAI}
-              signer={userSigner}
-              provider={mainnetProvider}
-              address={address}
-              blockExplorer="https://etherscan.io/"
-            />
-            {/*
-            <Contract
-              name="UNI"
-              customContract={mainnetContracts && mainnetContracts.contracts && mainnetContracts.contracts.UNI}
-              signer={userSigner}
-              provider={mainnetProvider}
-              address={address}
-              blockExplorer="https://etherscan.io/"
-            />
-            */}
-          </Route>
-          <Route path="/contract">
-              <Contract
-               name="YourContract"
-               signer={userSigner}
-               provider={localProvider}
-               address={address}
-               blockExplorer={blockExplorer}
-             />
+            /> */}
+          <Route path="/">
+            <EvaluatorView question={QUESTION} safeAddress={0x0000}/>
           </Route>
         </Switch>
       </BrowserRouter>

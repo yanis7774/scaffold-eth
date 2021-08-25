@@ -1,3 +1,8 @@
+// The yes or no question to display to evaluators
+//  Yes: the work is done and the money should be transferred to the worker
+//  No: The work is not done the payment should be transferred back to the sender
+export const QUESTION = "Did the the developer fix bug #123?"
+
 // MY INFURA_ID, SWAP IN YOURS FROM https://infura.io/dashboard/ethereum
 export const INFURA_ID = "460f40a260564ac4a4f4b3fffb032dad";
 
