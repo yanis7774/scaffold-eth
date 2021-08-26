@@ -26,14 +26,19 @@ module.exports = async ({ getNamedAccounts, deployments }) => {
   const safeAccountConfig = { owners, threshold };
   const safeSdk = await safeFactory.deploySafe(safeAccountConfig);
 
-  const proposeTransactions = async transactions => {
+  const proposeTransactions = async transaction => {
     try {
-      const safeTransaction = await safeSdk.createTransaction(...transactions);
+      console.log("INPUT to safeSdk.createTransaction:")
+      console.log(JSON.stringify(transaction))
+      const safeTransaction = await safeSdk.createTransaction(transaction);
       await safeSdk.signTransaction(safeTransaction);
+      console.log("safeSdk.signTransaction done")
       const txHash = await safeSdk.getTransactionHash(safeTransaction);
-      console.log("txHash: " + txHash);
-      console.log("safeTransaction: " + JSON.stringify(safeTransaction));
+      console.log("safeSdk.getTransactionHash is " + txHash)
+      console.log("OUTPUT safeTransaction:");
+      console.log(JSON.stringify(safeTransaction))
 
+      console.log("INPUT for serviceClient.proposeTransaction:")
       console.log(
         JSON.stringify({
           safeAddress,
@@ -74,34 +79,18 @@ module.exports = async ({ getNamedAccounts, deployments }) => {
     console.log(e);
   }
 
-  await proposeTransactions([
-    {
-      to: config.beneficiary,
-      value: ethers.utils.parseEther(config.ethAmountToSend) / 2,
-      data: "0x",
-      // nonce: 0,
-    },
-    {
-      to: config.beneficiary,
-      value: ethers.utils.parseEther(config.ethAmountToSend) / 2,
-      data: "0x",
-      // nonce: 0,
-    },
-  ]);
-  await proposeTransactions([
-    {
-      to: deployerAddress,
-      value: ethers.utils.parseEther(config.ethAmountToSend) / 2,
-      data: "0x",
-      // nonce: 0,
-    },
-    {
-      to: deployerAddress,
-      value: ethers.utils.parseEther(config.ethAmountToSend) / 2,
-      data: "0x",
-      // nonce: 0,
-    },
-  ]);
+  await proposeTransactions({
+    to: ethers.utils.getAddress(config.beneficiary),
+    value: ethers.utils.parseEther(config.ethAmountToSend),
+    data: "0x",
+    nonce: 0,
+  });
+  // await proposeTransactions({
+  //   to: deployerAddress,
+  //   value: ethers.utils.parseEther(config.ethAmountToSend),
+  //   data: "0x",
+  //   nonce: 0,
+  // });
   console.log("Transactions for both yes and no case created and proposed via the safe-service-client");
   // const transactions = [
   //   {
