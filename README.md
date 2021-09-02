@@ -5,7 +5,7 @@
 ### Installation
 
 ```sh
-git clone -b gnosis-starter-kit https://github.com/austintgriffith/scaffold-eth.git gnosis-starter-kit
+git clone -b gnosis-results-oracle https://github.com/sogasg/scaffold-eth.git gnosis-results-oracle
 
 cd gnosis-results-oracle
 
