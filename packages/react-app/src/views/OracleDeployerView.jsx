@@ -36,7 +36,7 @@ function OracleDeployerView({ mainnetProvider, tx, writeContracts, price, addres
       onEthSent: () => setEthSentToSafe(true),
       onTransactionsCreated: () => setSetTransactionsCreated(true),
     });
-    history.push("/evaluator/" + safeAddress);
+    history.push("/evaluator?safeAddress=" + safeAddress);
     setEvaluators([""]);
     form.resetFields();
     setIsSendingTx(false);

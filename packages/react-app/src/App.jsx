@@ -416,7 +416,7 @@ function App(props) {
           <Route exact path="/">
             <Redirect to="/deploy" />
           </Route>
-          <Route path="/evaluator/:safeAddress">
+          <Route path="/evaluator">
             <OracleEvaluatorView userAddress={address} userSigner={userSigner}/>
           </Route>
           <Route path="/deploy">

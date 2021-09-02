@@ -6,14 +6,18 @@ import SafeServiceClient from "@gnosis.pm/safe-service-client";
 import { ColumnWidthOutlined } from "@ant-design/icons";
 import { TransactionDescription } from "ethers/lib/utils";
 import { EthSignSignature } from "./EthSignSignature";
-import { useParams } from "react-router-dom";
+import { useLocation } from "react-router-dom";
+
+function useQuery() {
+  return new URLSearchParams(useLocation().search);
+}
 
 const { Title, Text } = Typography;
 const serviceClient = new SafeServiceClient("https://safe-transaction.rinkeby.gnosis.io/");
 
 export default function OracleEvaluatorView({ userAddress, userSigner }) {
-  const { safeAddress } = useParams();
-  console.log("address of safe: " + safeAddress);
+  const query = useQuery();
+  const safeAddress = query.get("safeAddress");
   const [evaluators, setEvaluators] = useState([]);
   const [workString, setWorkString] = useState("");
   const [beneficiary, setBeneficiary] = useState("");
@@ -57,7 +61,6 @@ export default function OracleEvaluatorView({ userAddress, userSigner }) {
         setDone(true);
       }
       const transaction = results.find(data => data.to.toLowerCase() === deployer);
-      console.log("the transactio");
       console.log(transaction);
       const yesTrans = results.find(_ => _.to.toLowerCase() !== deployer);
       const noTrans = results.find(_ => _.to.toLowerCase() === deployer);
@@ -69,7 +72,7 @@ export default function OracleEvaluatorView({ userAddress, userSigner }) {
       }
       setSafeLoaded(true);
     }
-  });
+  }, [safeAddress, serviceClient]);
 
   const signTransaction = async transaction => {
     const hash = transaction.safeTxHash;
