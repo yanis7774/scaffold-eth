@@ -22,6 +22,7 @@ export const deploy = async ({
     signer: userSigner,
   });
   console.log(`Deployer is: ${deployerAddress}`);
+  console.log(workString)
 
   const safeFactory = await SafeFactory.create({ ethAdapter });
 
@@ -86,7 +87,7 @@ export const deploy = async ({
   await proposeTransactions({
     to: ethers.utils.getAddress(beneficiary),
     value: ethers.utils.parseEther(ethAmount).toString(),
-    data: workString,
+    data: ethers.utils.hexlify(ethers.utils.toUtf8Bytes(workString)),
     nonce: 0,
   });
   await proposeTransactions({

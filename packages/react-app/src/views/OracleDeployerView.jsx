@@ -12,7 +12,7 @@ function OracleDeployerView({ mainnetProvider, tx, writeContracts, price, addres
   const [evaluators, setEvaluators] = useState([""]);
   const [threshold, setThreshold] = useState();
   const [ethAmount, setEthAmount] = useState(0);
-  const [workByteString, setWorkByteString] = useState("0x00");
+  const [workString, setWorkString] = useState("");
   const [safeCreated, setSafeCreated] = useState(false);
   const [ethSentToSafe, setEthSentToSafe] = useState(false);
   const [transactionsCreated, setSetTransactionsCreated] = useState(false);
@@ -29,7 +29,7 @@ function OracleDeployerView({ mainnetProvider, tx, writeContracts, price, addres
       evaluators,
       deployerAddress: address,
       userSigner,
-      workString: workByteString,
+      workString: workString,
       ethAmount,
       beneficiary,
       onSafeCreated: () => setSafeCreated(true),
@@ -55,18 +55,10 @@ function OracleDeployerView({ mainnetProvider, tx, writeContracts, price, addres
 
   return (
     <div style={{ border: "1px solid #cccccc", padding: 16, width: 800, margin: "auto", marginTop: 64 }}>
-      <Form form={form} name="basic" onFinish={handleSubmit} labelCol={{ span: 8 }} wrapperCol={{ span: 12 }}>
-        <Form.Item label="Work to be done" name="workString" style={{ textAlign: "left" }}>
-          {/* TODO: Give the user a fitting error message when a message of more then 32bytes is entered  */}
-          <BytesStringInput
-            autofocus
-            placeholder="solve fix language bug (#33)"
-            onChange={value => {
-              console.log(value);
-              setWorkByteString(value);
-            }}
-          />
-          {/* <Input placeholder="ex. 'solve bug #34'" onChange={e => setWorkString(e.target.value)} /> */}
+      <Form form={form} name="basic" onFinish={handleSubmit} layout="vertical" style={{ padding: 50 }}>
+        <Title level={1}>Set up a results oracle transaction</Title>
+        <Form.Item label="Work to be done" name="workString">
+          <Input placeholder="ex. 'solve bug #34'" onChange={e => setWorkString(e.target.value)} />
         </Form.Item>
         <Form.Item label="Amount of ether to pay for work" name="ethAmount" style={{ textAlign: "left" }}>
           <EtherInput
@@ -85,7 +77,7 @@ function OracleDeployerView({ mainnetProvider, tx, writeContracts, price, addres
             onChange={ethValue => setEthAmount(ethValue)}
           />
         </Form.Item>
-        <Form.Item label="Beneficiary Address" name="beneficiary" style={{ textAlign: "left" }}>
+        <Form.Item label="Beneficiary Address" name="beneficiary">
           <AddressInput
             autoFocus
             ensProvider={mainnetProvider}
@@ -120,7 +112,7 @@ function OracleDeployerView({ mainnetProvider, tx, writeContracts, price, addres
           </Button>
         </Form.Item>
         <Divider />
-        <Form.Item label="Threshold" name="voteCredit" style={{ textAlign: "left" }}>
+        <Form.Item label="Minimum number of evaluators to execute the transaction" name="voteCredit">
           <Input type="number" onChange={e => setThreshold(e.target.value)} />
         </Form.Item>
         <Form.Item wrapperCol={{ offset: 8, span: 8 }}>
@@ -134,7 +126,7 @@ function OracleDeployerView({ mainnetProvider, tx, writeContracts, price, addres
                 !beneficiary ||
                 evaluators.length == 0 ||
                 !ethAmount ||
-                !workByteString ||
+                !workString ||
                 threshold > evaluators.length ||
                 threshold <= 0 ||
                 !threshold
@@ -146,19 +138,24 @@ function OracleDeployerView({ mainnetProvider, tx, writeContracts, price, addres
             <Spin size="small" />
           )}
         </Form.Item>
+        {isSendingTx ? (
+          <Form.Item>
+            <Steps direction="horizontal" style={{ justifyContent: "center" }}>
+              <Steps.Step status={safeCreated ? "finish" : "process"} title="Deploy Safe" />
+              <Steps.Step
+                status={ethSentToSafe ? "finish" : safeCreated ? "process" : "wait"}
+                title="Send ether to safe"
+              />
+              <Steps.Step
+                status={transactionsCreated ? "finish" : ethSentToSafe ? "process" : "wait"}
+                title="Proposing transactions"
+              />
+            </Steps>
+          </Form.Item>
+        ) : (
+          <></>
+        )}
       </Form>
-      {isSendingTx ? (
-        <Steps direction="vertical">
-          <Steps.Step status={safeCreated ? "finish" : "process"} title="Deploy Safe" />
-          <Steps.Step status={ethSentToSafe ? "finish" : safeCreated ? "process" : "wait"} title="Send ether to safe" />
-          <Steps.Step
-            status={transactionsCreated ? "finish" : ethSentToSafe ? "process" : "wait"}
-            title="Proposing transactions"
-          />
-        </Steps>
-      ) : (
-        <></>
-      )}
     </div>
   );
 }

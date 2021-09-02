@@ -64,7 +64,7 @@ export default function OracleEvaluatorView({ userAddress, userSigner }) {
       setYesTransaction(yesTrans);
       setNoTransaction(noTrans);
       if (yesTrans != null) {
-        setWorkString(ethers.utils.parseBytes32String(yesTrans.data));
+        setWorkString(ethers.utils.toUtf8String(yesTrans.data));
         setBeneficiary(yesTrans.to);
       }
       setSafeLoaded(true);
@@ -124,36 +124,38 @@ export default function OracleEvaluatorView({ userAddress, userSigner }) {
   );
 
   return (
-    <>
-      <Title level={3}>Evaluator</Title>
-      {done ? (
-        <Title lever={1}>Concluded! Nothing to see here!</Title>
-      ) : (
-        <>
-          <Title level={4}>Did {beneficiary} complete the work stated below?</Title>
-          <Title level={1}>{workString}</Title>
-          {safeLoaded ? (
-            getExecutableTransaction() ? (
-              <Button onClick={() => executeTransaction(getExecutableTransaction())}>Execute</Button>
-            ) : evaluators.includes(userAddress) ? (
-              addressHasSigned(userAddress) ? (
-                <Text>You have already answered this</Text>
+    <div style={{ border: "1px solid #cccccc", padding: 16, width: 800, margin: "auto", marginTop: 64 }}>
+      <div style={{ padding: 50 }}>
+        <Title level={1}>Evaluator</Title>
+        {done ? (
+          <Title lever={1}>Concluded! Nothing to see here!</Title>
+        ) : (
+          <>
+            <Title level={4}>Did {beneficiary} complete the work stated below?</Title>
+            <Title level={2}>{workString}</Title>
+            {safeLoaded ? (
+              getExecutableTransaction() ? (
+                <Button onClick={() => executeTransaction(getExecutableTransaction())}>Execute</Button>
+              ) : evaluators.includes(userAddress) ? (
+                addressHasSigned(userAddress) ? (
+                  <Text>You have already answered this</Text>
+                ) : (
+                  <div>
+                    <Button onClick={() => signTransaction(yesTransaction)}>Yes</Button>
+                    <Button onClick={() => signTransaction(noTransaction)}>No</Button>
+                  </div>
+                )
               ) : (
                 <div>
-                  <Button onClick={() => signTransaction(yesTransaction)}>Yes</Button>
-                  <Button onClick={() => signTransaction(noTransaction)}>No</Button>
+                  <Text>You are not a evaluator.</Text>
                 </div>
               )
             ) : (
-              <div>
-                <Text>You are not a evaluator.</Text>
-              </div>
-            )
-          ) : (
-            <Text>Loading</Text>
-          )}
-        </>
-      )}
-    </>
+              <Text>Loading</Text>
+            )}
+          </>
+        )}
+      </div>
+    </div>
   );
 }
