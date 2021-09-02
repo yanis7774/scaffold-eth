@@ -8,7 +8,7 @@ import { BrowserRouter, Link, Route, Switch } from "react-router-dom";
 import Web3Modal from "web3modal";
 import "./App.css";
 import { Account, Contract, Faucet, GasGauge, Header, Ramp, ThemeSwitch } from "./components";
-import { SAFE_ADDRESS, SAFE_CONFIG ,INFURA_ID, NETWORK, NETWORKS } from "./constants";
+import { INFURA_ID, NETWORK, NETWORKS } from "./constants";
 import { Transactor } from "./helpers";
 import {
   useBalance,
@@ -21,7 +21,7 @@ import {
   useUserSigner,
 } from "./hooks";
 // import Hints from "./Hints";
-import {EvaluatorView ,GnosisStarterView, Hints, Subgraph } from "./views";
+import {OracleDeployerView, OracleEvaluatorView ,GnosisStarterView, Hints, Subgraph } from "./views";
 
 const { ethers } = require("ethers");
 /*
@@ -380,7 +380,7 @@ function App(props) {
       <Header />
       {networkDisplay}
       <BrowserRouter>
-        <Menu style={{ textAlign: "center" }} selectedKeys={[route]} mode="horizontal">
+        {/* <Menu style={{ textAlign: "center" }} selectedKeys={[route]} mode="horizontal">
           <Menu.Item key="/">
             <Link
               onClick={() => {
@@ -391,7 +391,7 @@ function App(props) {
               Evaluator
             </Link>
           </Menu.Item>
-        </Menu>
+        </Menu> */}
 
         <Switch>
             {/*
@@ -413,8 +413,11 @@ function App(props) {
               setPurposeEvents={setPurposeEvents}
               blockExplorer={blockExplorer}
             /> */}
-          <Route path="/">
-            <EvaluatorView config={SAFE_CONFIG} safeAddress={SAFE_ADDRESS} userAddress={address} userSigner={userSigner}/>
+          <Route path="/evaluator/:safeAddress">
+            <OracleEvaluatorView userAddress={address} userSigner={userSigner}/>
+          </Route>
+          <Route path="/deployer">
+            <OracleDeployerView mainnetProvider={mainnetProvider} writeContracts={writeContracts} tx={tx} price={price} userSigner={userSigner} address={address} />
           </Route>
         </Switch>
       </BrowserRouter>
