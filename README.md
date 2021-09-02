@@ -1,14 +1,13 @@
-# 🏗 scaffold-eth - 🦉 Gnosis Safe Starter Kit
+# 🏗 scaffold-eth - 🦉 Gnosis Safe Results Oracle
 
-> 🧫 Prototype frontend experiences that settle to a [Gnosis Safe](https://gnosis-safe.io/)
-
+> 🧫 Prototype frontend experiences for a results oracle implemented using a [Gnosis Safe](https://gnosis-safe.io/)
 
 ### Installation
 
 ```sh
 git clone -b gnosis-starter-kit https://github.com/austintgriffith/scaffold-eth.git gnosis-starter-kit
 
-cd gnosis-starter-kit
+cd gnosis-results-oracle
 
 yarn install
 
@@ -17,70 +16,31 @@ yarn start
 
 > 👉 Visit your frontend at http://localhost:3000
 
-
-
-
 ## Deployment
 
-> 📡 deploy a safe using the frontend or enter an existing safe address:
+> 📡 deploy a gnosis results oracle via the frontend:
 
 > ( ⛽️ Grab **Rinkeby** from the [faucet](https://faucet.rinkeby.io/) )
 
-![image](https://user-images.githubusercontent.com/2653167/129985013-b3562b2c-88b5-4180-9bbe-379808eb4267.png)
+![image](https://user-images.githubusercontent.com/2156509/131838814-e1141a6e-e389-4f9a-a2c7-a82b86934c59.png)
+
+Deploying a results oracle will 
+1) Deploy a gnosis safe.
+2) Transfer ETH from the deployed to the safe. 
+3) Two transactions will be created. One for the case when the work is completed, transferring the eth to the beneficiary. One for when the work is not completed, transferring the ETH back to the deployer. The worktext will be in the data field of the transaction for work completed.
+4) The deployer will be redirected to the result oracle's evaluator's view..
 
 ---
 
-> 📝 Edit `GnosisStarterView.jsx` in `packages/react-app/src/views` to change the deploy parameters.
+Once its deployed it will redirect to the evaluators view (url format http://localhost:3000/evaluator/{safe-address}). This is the URL that should be shared with evaluators.
 
-![image](https://user-images.githubusercontent.com/2653167/130370221-8f3c55c4-fe74-4e1a-b472-e2d4f1fa7428.png)
-
-
-(Setup *two* browsers with different addresses and add them both as `OWNERS` with a `THRESHOLD` of **2**.)
+![image](https://user-images.githubusercontent.com/2156509/131839428-4fd04a2f-52c5-45fb-b199-1f069793c55c.png)
 
 ---
 
-> Deploy the safe in one browser and paste it into the second browser:
-
-![image](https://user-images.githubusercontent.com/2653167/130370279-34b5424f-f08a-4f76-8880-793c57d1b14b.png)
+The evaluator should click the "Yes" or "No" button based on if the work has been completed or not. This will sign a transaction in the underlying Gnosis Safe. Once one of the transactions has enough signatures (dependent on the deployer's specified threshold), then execute button will appear.
 
 ---
-
-> Send some Rinkeby to your Safe by copying the address and using the 'wallet icon' in the top right:
-
-![image](https://user-images.githubusercontent.com/2653167/130370297-0425ede2-846c-4d5e-b71a-4c3a6790ce77.png)
-
-![image](https://user-images.githubusercontent.com/2653167/130370307-34763ae1-4b2a-466b-89cd-08b5751c72ba.png)
-
----
-
-> Propose a transaction that sends funds vitalik.eth:
-
-![image](https://user-images.githubusercontent.com/2653167/130370336-89288eeb-be94-49e1-8e39-eaf608002e40.png)
-
-
----
-
-> The second browser can then sign the second signature:
-
-![image](https://user-images.githubusercontent.com/2653167/130370374-0dc87367-ebff-4e4c-9820-c54ed1a9df95.png)
-
-
----
-
-> After the threshold of signatures is met, anyone can execute the transacation:
-
-![image](https://user-images.githubusercontent.com/2653167/130370390-5d083f06-178f-409f-9706-42498aed8cec.png)
-
----
-
-> Check the multisig balance to make sure the funds were sent:
-
-![image](https://user-images.githubusercontent.com/2653167/130370436-47eb5ef2-9e57-4539-af29-a4ee277214e7.png)
-
-
----
-
-
 
 ## Support
 

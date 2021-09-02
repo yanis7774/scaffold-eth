@@ -4,7 +4,7 @@ import WalletLink from "walletlink";
 import { Alert, Button, Col, Menu, Row } from "antd";
 import "antd/dist/antd.css";
 import React, { useCallback, useEffect, useState } from "react";
-import { BrowserRouter, Link, Route, Switch } from "react-router-dom";
+import { BrowserRouter, Link, Route, Switch, Redirect } from "react-router-dom";
 import Web3Modal from "web3modal";
 import "./App.css";
 import { Account, Contract, Faucet, GasGauge, Header, Ramp, ThemeSwitch } from "./components";
@@ -413,10 +413,13 @@ function App(props) {
               setPurposeEvents={setPurposeEvents}
               blockExplorer={blockExplorer}
             /> */}
+          <Route exact path="/">
+            <Redirect to="/deploy" />
+          </Route>
           <Route path="/evaluator/:safeAddress">
             <OracleEvaluatorView userAddress={address} userSigner={userSigner}/>
           </Route>
-          <Route path="/deployer">
+          <Route path="/deploy">
             <OracleDeployerView mainnetProvider={mainnetProvider} writeContracts={writeContracts} tx={tx} price={price} userSigner={userSigner} address={address} />
           </Route>
         </Switch>

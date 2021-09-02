@@ -7,8 +7,6 @@ import { deploy as deployOracle } from "./oracleDeploy";
 const { Title } = Typography;
 import { withRouter } from "react-router-dom";
 
-import { Redirect } from "react-router-dom";
-
 function OracleDeployerView({ mainnetProvider, tx, writeContracts, price, address, userSigner, history }) {
   const [beneficiary, setBeneficiary] = useState("");
   const [evaluators, setEvaluators] = useState([""]);
@@ -142,7 +140,7 @@ function OracleDeployerView({ mainnetProvider, tx, writeContracts, price, addres
                 !threshold
               }
             >
-              Deploy the results-oracle
+              Deploy the results oracle
             </Button>
           ) : (
             <Spin size="small" />
