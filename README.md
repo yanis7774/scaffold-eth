@@ -22,7 +22,7 @@ yarn start
 
 > ( ⛽️ Grab **Rinkeby** from the [faucet](https://faucet.rinkeby.io/) )
 
-![image](https://user-images.githubusercontent.com/2156509/131838814-e1141a6e-e389-4f9a-a2c7-a82b86934c59.png)
+![image](https://user-images.githubusercontent.com/2156509/131915026-312ae5c3-0dc4-4e2d-aa51-a2edfd938cdb.png)
 
 Deploying a results oracle will 
 1) Deploy a gnosis safe.
@@ -34,7 +34,7 @@ Deploying a results oracle will
 
 Once its deployed it will redirect to the evaluators view (url format http://localhost:3000/evaluator/{safe-address}). This is the URL that should be shared with evaluators.
 
-![image](https://user-images.githubusercontent.com/2156509/131839428-4fd04a2f-52c5-45fb-b199-1f069793c55c.png)
+![image](https://user-images.githubusercontent.com/2156509/131915078-f0c9a49d-01ca-465d-acc1-a1bbbac9308c.png)
 
 ---
 
