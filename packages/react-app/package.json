@@ -82,10 +82,10 @@
     "extends": "react-app"
   },
   "scripts": {
-    "build": "cp ../../config.js ./src/ && react-scripts build",
+    "build": "react-scripts build",
     "eject": "react-scripts eject",
     "prestart": "node ./scripts/create_contracts.js",
-    "start": "cp ../../config.js ./src/ &&  react-scripts start",
+    "start": "react-scripts start",
     "test": "react-scripts test",
     "lint": "eslint --config ./.eslintrc.js --ignore-path ./.eslintignore ./src/**/*",
     "ipfs": "node ./scripts/ipfs.js",

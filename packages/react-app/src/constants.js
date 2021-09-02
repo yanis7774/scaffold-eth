@@ -1,10 +1,3 @@
-import safeConfig from "./config"
-
-// TODO: This should be added to the frontend automatically when deploying the safe via `yarn deploy`
-export const SAFE_ADDRESS = "0xD74303C38BBFe4A9d58d4831A757AaaAf2304A34"
-
-export const SAFE_CONFIG = safeConfig
-
 // MY INFURA_ID, SWAP IN YOURS FROM https://infura.io/dashboard/ethereum
 export const INFURA_ID = "460f40a260564ac4a4f4b3fffb032dad";
 

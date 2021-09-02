@@ -44,4 +44,3 @@ yarn-error.log*
 
 # vscode config folder
 .vscode/
-packages/react-app/src/config.js
