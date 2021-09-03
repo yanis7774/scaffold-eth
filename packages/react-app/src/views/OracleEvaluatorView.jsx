@@ -62,7 +62,7 @@ export default function OracleEvaluatorView({ userAddress, userSigner }) {
       }
       const transaction = results.find(data => data.to.toLowerCase() === deployer);
       console.log(transaction);
-      const yesTrans = results.find(_ => _.to.toLowerCase() !== deployer);
+      const yesTrans = results.find(_ => _.data !== "0x" && _.data != null);
       const noTrans = results.find(_ => _.to.toLowerCase() === deployer);
       setYesTransaction(yesTrans);
       setNoTransaction(noTrans);
