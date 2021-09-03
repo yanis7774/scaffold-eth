@@ -3,6 +3,10 @@ import Safe, { EthersAdapter, SafeFactory, SafeTransaction, TransactionOptions }
 import SafeServiceClient from "@gnosis.pm/safe-service-client";
 import { ethers } from "ethers";
 
+const sleep = ms => {
+  return new Promise(resolve => setTimeout(resolve, ms));
+};
+
 export const deploy = async ({
   tx,
   threshold,
@@ -22,7 +26,7 @@ export const deploy = async ({
     signer: userSigner,
   });
   console.log(`Deployer is: ${deployerAddress}`);
-  console.log(workString)
+  console.log(workString);
 
   const safeFactory = await SafeFactory.create({ ethAdapter });
 
@@ -78,7 +82,7 @@ export const deploy = async ({
     await newTx.wait();
 
     console.log(`Safe funded with ${ethAmount} ETH`);
-    onEthSent()
+    onEthSent();
   } catch (e) {
     console.log(`Ether transfer failed!`);
     console.log(e);
@@ -96,7 +100,9 @@ export const deploy = async ({
     data: "0x",
     nonce: 0,
   });
-  onTransactionsCreated()
+
+  await sleep(2000); // give the gnosis service some time to process the transactions
+  onTransactionsCreated();
   console.log("Transactions for both yes and no case created and proposed via the safe-service-client");
-  return safeAddress
+  return safeAddress;
 };

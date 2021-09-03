@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from "react";
 import { ethers } from "ethers";
 import Safe, { EthersAdapter, SafeFactory, SafeTransaction, TransactionOptions } from "@gnosis.pm/safe-core-sdk";
-import { Typography, Button, Row, Divider } from "antd";
+import { Typography, Button, Row, Divider, Spin } from "antd";
 import SafeServiceClient from "@gnosis.pm/safe-service-client";
 import { ColumnWidthOutlined } from "@ant-design/icons";
 import { TransactionDescription } from "ethers/lib/utils";
 import { EthSignSignature } from "./EthSignSignature";
+import { usePoller } from "../hooks";
 import { useLocation } from "react-router-dom";
 
 function useQuery() {
@@ -26,6 +27,7 @@ export default function OracleEvaluatorView({ userAddress, userSigner }) {
   const [threshold, setThreshold] = useState();
   const [safeSdk, setSafeSdk] = useState();
   const [safeLoaded, setSafeLoaded] = useState(false);
+  const [executing, setExecuting] = useState(false);
   const [done, setDone] = useState(false);
 
   useEffect(async () => {
@@ -44,7 +46,7 @@ export default function OracleEvaluatorView({ userAddress, userSigner }) {
     }
   }, [userSigner]);
 
-  useEffect(async () => {
+  usePoller(async () => {
     if (!safeLoaded) {
       const safeInfo = await serviceClient.getSafeCreationInfo(safeAddress);
       console.log("safeInfo:");
@@ -72,17 +74,20 @@ export default function OracleEvaluatorView({ userAddress, userSigner }) {
       }
       setSafeLoaded(true);
     }
-  }, [safeAddress, serviceClient]);
+  }, 1500);
 
   const signTransaction = async transaction => {
+    setExecuting(true);
     const hash = transaction.safeTxHash;
     const signature = await safeSdk.signTransactionHash(hash);
     await serviceClient.confirmTransaction(hash, signature.data);
     console.log("Signed the transaction!");
     setSafeLoaded(false);
+    setExecuting(false);
   };
 
   const executeTransaction = async transaction => {
+    setExecuting(true);
     console.log(transaction);
     const safeTransactionData = {
       to: transaction.to,
@@ -103,6 +108,8 @@ export default function OracleEvaluatorView({ userAddress, userSigner }) {
     const executeTxResponse = await safeSdk.executeTransaction(safeTransaction);
     const receipt = executeTxResponse.transactionResponse && (await executeTxResponse.transactionResponse.wait());
     console.log(receipt);
+    setDone(true);
+    setExecuting(false);
   };
 
   const addressHasSigned = address =>
@@ -137,7 +144,9 @@ export default function OracleEvaluatorView({ userAddress, userSigner }) {
             <Title level={4}>Did {beneficiary} complete the work stated below?</Title>
             <Title level={2}>{workString}</Title>
             {safeLoaded ? (
-              getExecutableTransaction() ? (
+              executing ? (
+                <Spin size="small" />
+              ) : getExecutableTransaction() ? (
                 <Button onClick={() => executeTransaction(getExecutableTransaction())}>Execute</Button>
               ) : evaluators.includes(userAddress) ? (
                 addressHasSigned(userAddress) ? (
